@@ -1,0 +1,24 @@
+<hyper_params>
+    <data_loader_params>
+        <param name="enable_entity_detection" type="bool">True</param>
+        <param name="word_list_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+        <param name="entity_list_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+    </data_loader_params>
+    <data_generator_params>
+        <param name="enable_entity_bit" type="bool">True</param>
+        <param name="word_list_length" type="int">30000</param>
+        <param name="entity_list_length" type="int">10000</param>
+        <param name="word_frequency_threshold" type="int">10</param>
+        <param name="max_encoding_step" type="int">500</param>
+        <param name="max_decoding_step" type="int">100</param>
+    </data_generator_params>
+    <param name="word_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+    <param name="entity_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+    <param name="idx2idx_file" type="str">data/documents/neuralsum/dailymail/idx_global2local.pkl</param>
+    <param name="batch_size" type="int">5</param>
+    <data_sets>
+        <param name="train" type="list_str">data/documents/neuralsum/dailymail/training_extend_index</param>
+        <param name="validate" type="list_str">data/documents/neuralsum/dailymail/validation_extend_index</param>
+        <param name="test" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+    </data_sets>
+</hyper_params>

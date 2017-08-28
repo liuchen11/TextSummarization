@@ -1,0 +1,74 @@
+<hyper_params>
+    <loader>
+        <data_loader>
+            <param name="enable_entity_detection" type="bool">False</param>
+            <param name="word_list_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+            <param name="entity_list_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+        </data_loader>
+        <param name="src_folder_list2build_list" type="list_str">data/documents/neuralsum/dailymail/training_text,data/documents/neuralsum/dailymail/validation_text</param>
+        <param name="dest_folder_list2build_list" type="list_str">data/documents/neuralsum/dailymail/training_extend_index,data/documents/neuralsum/dailymail/validation_extend_index</param>
+        <param name="src_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_text</param>
+        <param name="dest_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+        <param name="list_saved_format" type="str">pkl</param>
+        <param name="reload" type="bool">False</param>
+    </loader>
+    <generator_params>
+        <data_generator_params>
+            <param name="enable_entity_bit" type="bool">False</param>
+            <param name="word_list_length" type="int">40000</param>
+            <param name="entity_list_length" type="int">0000</param>
+            <param name="word_frequency_threshold" type="int">10</param>
+            <param name="max_encoding_step" type="int">500</param>
+            <param name="max_decoding_step" type="int">100</param>
+        </data_generator_params>
+        <data_sets>
+            <param name="train" type="list_str">data/documents/neuralsum/dailymail/training_extend_index</param>
+            <param name="validate" type="list_str">data/documents/neuralsum/dailymail/validation_extend_index</param>
+            <param name="test" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+        </data_sets>
+    </generator_params>
+    <embedding_params>
+        <embedding_loader_params>
+            <param name="embedding_dim" type="int">100</param>
+        </embedding_loader_params>
+        <param name="source" type="str">data/embeddings/glove/glove.6B.100d.txt</param>
+        <param name="format" type="str">text</param>
+    </embedding_params>
+    <network_params>
+        <pgnet_model_params>
+            <param name="name" type="str">demo</param>
+            <param name="mode" type="str">decode</param>
+            <param name="batch_size" type="int">20</param>
+            <param name="vocab_size" type="int">40000</param>
+            <param name="embedding_dim" type="int">100</param>
+            <param name="encoding_dim" type="int">100</param>
+            <param name="decoding_dim" type="int">100</param>
+            <param name="max_encoding_step" type="int">500</param>
+            <param name="max_decoding_step" type="int">1</param>
+            <param name="use_pointer" type="bool">True</param>
+            <param name="hybrid_alpha" type="float">0.5</param>
+            <param name="loss_type" type="str">max_likelihood</param>
+            <param name="pretrained_embeddings" type="bool">False</param>
+            <update_policy>
+                <param name="name" type="str">adam</param>
+                <param name="learning_rate" type="float">0.0005</param>
+                <param name="momentum" type="float"></param>
+                <param name="initial_accumulator_value" type="float"></param>
+                <param name="rho" type="float"></param>
+                <param name="epsilon" type="float">1e-8</param>
+                <param name="decay" type="float"></param>
+                <param name="beta1" type="float">0.9</param>
+                <param name="beta2" type="float">0.999</param>
+            </update_policy>
+        </pgnet_model_params>
+        <param name="model2load" type="str">model_saved/config_8-1_5500.ckpt</param>
+        <param name="gpu_ratio" type="float">-1</param>
+    </network_params>
+    <search_params>
+        <beam_search_params>
+            <param name="beam_size" type="int">20</param>
+        </beam_search_params>
+        <param name="output_text_folder" type="str"></param>
+        <param name="max_processed_documents" type="int">-1</param>
+    </search_params>
+</hyper_params>

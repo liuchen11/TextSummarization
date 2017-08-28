@@ -1,0 +1,11 @@
+<hyper_params>
+    <data_loader_params>
+        <param name="enable_entity_detection" type="bool">True</param>
+        <param name="word_list_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+        <param name="entity_list_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+    </data_loader_params>
+    <param name="src_folder_list2built" type="list_str">data/documents/neuralsum/dailymail/training_text,data/documents/neuralsum/dailymail/validation_text</param>
+    <param name="dest_folder_list2built" type="list_str">data/documents/neuralsum/dailymail/training_extend_index,data/documents/neuralsum/dailymail/validation_extend_index</param>
+    <param name="src_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_text</param>
+    <param name="dest_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+</hyper_params>

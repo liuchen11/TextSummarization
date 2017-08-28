@@ -1,0 +1,16 @@
+<hyper_params>
+    <param name="name" type="str">compare_text_summary</param>
+    <compare_text_summary>
+        <param name="data_folders" type="list_str">/home/chen/data/documents/neuralsum/dailymail/training_text,/home/chen/data/documents/neuralsum/dailymail/validation_text,/home/chen/data/documents/neuralsum/dailymail/test_text</param>
+        <param name="batch_size" type="int">10000</param>
+        <param name="output_file" type="str">ground_truth_analysis.pkl</param>
+        <param name="metric" type="str">cosine</param>
+        <sent2vec_param>
+            <param name="sent2vec_root" type="str">/home/chen/sent2vec</param>
+            <param name="snlp_root" type="str">/home/chen/sent2vec/resources</param>
+            <param name="pretrain_model_root" type="str">/home/chen/sent2vec/pretrained_model</param>
+            <param name="ngram" type="str">unigram</param>
+            <param name="model" type="str">wiki</param>
+        </sent2vec_param>
+    </compare_text_summary>
+</hyper_params>

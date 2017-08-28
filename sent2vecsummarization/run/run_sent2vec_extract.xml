@@ -1,0 +1,17 @@
+<hyper_params>
+    <param name="sort_by_order" type="bool">True</param>
+    <param name="saved_marks" type="bool">True</param>
+    <param name="folder2scan" type="str">../sentenceextract/data/documents/neuralsum/dailymail/test_text</param>
+    <param name="output_file" type="str">./output/test_result.pkl</param>
+    <sent2vec_extract>
+        <param name="name" type="str">sentence_extractor1</param>
+        <param name="ngram" type="str">unigram</param>
+        <param name="model" type="str">wiki</param>
+        <param name="n_top" type="int">5</param>
+        <sent2vec_wrapper>
+            <param name="sent2vec_root" type="str">../sent2vec</param>
+            <param name="snlp_root" type="str">../sent2vec/resources</param>
+            <param name="pretrain_model_root" type="str">../sent2vec/pretrained_model</param>
+        </sent2vec_wrapper>
+    </sent2vec_extract>    
+</hyper_params>
