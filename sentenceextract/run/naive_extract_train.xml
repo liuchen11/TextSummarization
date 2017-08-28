@@ -1,0 +1,68 @@
+<hyper_params>
+    <loader>
+        <data_loader>
+            <param name="enable_entity_detection" type="bool">True</param>
+            <param name="word_list_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+            <param name="entity_list_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+        </data_loader>
+        <param name="src_folder_list2build_list" type="list_str">data/documents/neuralsum/dailymail/training_text,data/documents/neuralsum/dailymail/validation_text</param>
+        <param name="dest_folder_list2build_list" type="list_str">data/documents/neuralsum/dailymail/training_extend_index,data/documents/neuralsum/dailymail/validation_extend_index</param>
+        <param name="src_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_text</param>
+        <param name="dest_folder_list2parse" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+        <param name="list_saved_format" type="str">pkl</param>
+    </loader>
+    <generator_params>
+        <data_generator_params>
+            <param name="enable_entity_bit" type="bool">True</param>
+            <param name="word_list_length" type="int">30000</param>
+            <param name="entity_list_length" type="int">10000</param>
+            <param name="word_frequency_threshold" type="int">10</param>
+            <param name="document_length_threshold" type="int">60</param>
+            <param name="sentence_length_threshold" type="int">100</param>
+        </data_generator_params>
+        <data_sets>
+            <param name="train" type="list_str">data/documents/neuralsum/dailymail/training_extend_index</param>
+            <param name="validate" type="list_str">data/documents/neuralsum/dailymail/validation_extend_index</param>
+            <param name="test" type="list_str">data/documents/neuralsum/dailymail/test_extend_index</param>
+        </data_sets>
+    </generator_params>
+    <embedding_params>
+        <embedding_loader_params>
+            <param name="embedding_dim" type="int">100</param>
+        </embedding_loader_params>
+        <param name="source" type="str">data/embeddings/glove/glove.6B.100d.txt</param>
+        <param name="format" type="str">text</param>
+    </embedding_params>
+    <network_params>
+        <naive_model_params>
+            <param name="batch_size" type="int">20</param>
+            <param name="sequence_length" type="int">100</param>
+            <param name="class_num" type="int">2</param>
+            <param name="vocab_size" type="int">40003</param>
+            <param name="embedding_dim" type="int">100</param>
+            <param name="filter_sizes" type="list_int">1,2,3,4,5,6,7</param>
+            <param name="feature_map" type="int">300</param>
+            <param name="hidden_sizes" type="list_int">50</param>
+            <param name="name" type="str">naive_entity_enabled1</param>
+            <param name="grad_clip_norm" type="float">0.2</param>
+            <param name="input_extend_types" type="list_str">entity_bit</param>
+            <update_policy>
+                <param name="name" type="str">adam</param>
+                <param name="learning_rate" type="float">0.0005</param>
+                <param name="momentum" type="float"></param>
+                <param name="initial_accumulator_value" type="float"></param>
+                <param name="rho" type="float"></param>
+                <param name="epsilon" type="float">1e-8</param>
+                <param name="decay" type="float"></param>
+                <param name="beta1" type="float">0.9</param>
+                <param name="beta2" type="float">0.999</param>
+            </update_policy>
+        </naive_model_params>
+        <param name="model_saved_folder" type="str">model_saved</param>
+        <param name="batches" type="int">100000</param>
+        <param name="validation_frequency" type="int">5000</param>
+        <param name="validation_batches" type="int">5000</param>
+        <param name="input_extend_tags" type="list_str">entity_bit</param>
+        <param name="begin_batch_idx" type="int">0</param>
+    </network_params>
+</hyper_params>

@@ -1,0 +1,44 @@
+<hyper_params>
+    <param name="model_tag" type="str">sentence_extractor</param>
+    <sentence_extractor>
+        <param name="batch_size" type="int">20</param>
+        <param name="sequence_length" type="int">100</param>
+        <param name="sequence_num" type="int">60</param>
+        <param name="rnn_size" type="int">750</param>
+        <param name="mlp_neurons" type="list_int">1500,300,60</param>
+        <param name="class_num" type="int">2</param>
+        <param name="vocab_size" type="int">40002</param>
+        <param name="embedding_dim" type="int">100</param>
+        <param name="filter_sizes" type="list_int">1,2,3,4,5,6,7</param>
+        <param name="feature_map" type="int">300</param>
+        <param name="separator_trainable" type="bool">True</param>
+        <param name="name" type="str">entity_disabled-pretrainWE1</param>
+        <param name="grad_clip_norm" type="float">0.2</param>
+        <param name="input_extend_types" type="list_str"></param>
+        <update_policy>
+            <param name="name" type="str">adam</param>
+            <param name="learning_rate" type="float">0.0005</param>
+            <param name="momentum" type="float"></param>
+            <param name="initial_accumulator_value" type="float"></param>
+            <param name="rho" type="float"></param>
+            <param name="epsilon" type="float">1e-8</param>
+            <param name="decay" type="float"></param>
+            <param name="beta1" type="float">0.9</param>
+            <param name="beta2" type="float">0.999</param>
+        </update_policy>
+    </sentence_extractor>
+    <data_generator_params>
+            <param name="enable_entity_bit" type="bool">False</param>
+            <param name="word_list_length" type="int">40000</param>
+            <param name="entity_list_length" type="int">0000</param>
+            <param name="word_frequency_threshold" type="int">10</param>
+            <param name="document_length_threshold" type="int">60</param>
+            <param name="sentence_length_threshold" type="int">100</param>
+    </data_generator_params>
+    <param name="model2load" type="str">model_saved/entity_disabled-pretrainWE1_15000.ckpt</param>
+    <param name="word_file" type="str">data/documents/neuralsum/dailymail/word_list.pkl</param>
+    <param name="entity_file" type="str">data/documents/neuralsum/dailymail/entity_list.pkl</param>
+    <param name="format" type="str">pkl</param>
+    <param name="folder2store" type="str">tmp</param>
+    <param name="n_top" type="int">5</param>
+</hyper_params>
