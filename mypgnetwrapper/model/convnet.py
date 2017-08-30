@@ -54,8 +54,7 @@ class convnet(object):
 
         self.sess=None
 
-        with tf.variable_scope('convnet') as root_scope:
-            self.root_scope=root_scope
+        with tf.variable_scope('convnet'):
             if not 'embedding_matrix' in hyper_params:
                 print('Word embeddings are initialized from scratch')
                 self.embedding_matrix=tf.Variable(tf.random_uniform([self.vocab_size,self.embedding_dim],-1.0,1.0),dtype=tf.float32)
@@ -90,7 +89,7 @@ class convnet(object):
                 for part in parts[1:]:
                     self.current_embedding=tf.add(part,self.current_embedding)
 
-            unnormalized_prediction=self.mlp(input_data=self.current_embedding, hidden_sizes=[self.feature_map,]+self.hidden_sizes,
+            self.feature_vector, unnormalized_prediction=self.mlp(input_data=self.current_embedding, hidden_sizes=[self.feature_map,]+self.hidden_sizes,
                 output_size=self.class_num, name='Classifier')                          # of shape [self.batch_size, self.class_num]
             normalized_prediction=tf.nn.softmax(unnormalized_prediction, dim=-1)        # fix the bug solved by tensorflow 1.1
             embedded_label=tf.nn.embedding_lookup(tf.eye(self.class_num), self.labels)  # of shape [self.batch_size, self.class_num]
@@ -187,29 +186,21 @@ class convnet(object):
                 initializer=tf.truncated_normal_initializer(stddev=stddev))
             b=tf.get_variable(name='b_final',shape=[output_dim,],
                 initializer=tf.truncated_normal_initializer(stddev=stddev))
-            return tf.add(tf.matmul(data,W),b)      # of size [self.batch_size, output_size]
+            return data, tf.add(tf.matmul(data,W),b)      # of size [self.batch_size, output_size]
 
-    def train_validate_test_init(self, gpu_memory_fraction=-1):
+    def train_validate_test_init(self, gpu_memory_fraction=0.25):
         '''
         >>> Initialize the training validation and test phrase
         '''
-        if gpu_memory_fraction>0 and gpu_memory_fraction<1:
-            gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
-            gpu_config=tf.ConfigProto(gpu_options=gpu_options)
-            message='GPU memory fraction = %.2f'%gpu_memory_fraction
-        else:
-            gpu_config=tf.ConfigProto(allow_soft_placement=True)
-            gpu_config.gpu_options.allow_growth=True
-            message='GPU memory mode: soft increase'
-
+        gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
         if self.sess!=None:
             print('Model\'s session cannot be created twice')
         elif tf.get_default_session()!=None:
             print('Directly use the default session and drop configuration parameters')
             self.sess=tf.get_default_session()
         else:
-            self.sess=tf.Session(config=gpu_config)
-            print(message)
+            self.sess=tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        print('GPU memory fraction = %.2f'%gpu_memory_fraction)
         init=tf.global_variables_initializer()
         self.sess.run(init)
 
@@ -264,6 +255,28 @@ class convnet(object):
 
         return prediction_this_batch
 
+    def sequence2vec(self, input_text, word2idx, unknown_idx):
+        '''
+        >>> convert the sequence of word into text
+        '''
+        words=input_text.split(' ')
+        word_idx=[]
+        for word in words:
+            if word in word2idx:
+                word_idx.append(word_idx[word])
+            else:
+                word_idx.append(unknown_idx)
+
+        if len(word_idx)>self.sequence_length:
+            word_idx=word_idx[:self.sequence_length]
+
+        inputs=np.zeros([self.batch_size, self.sequence_length], dtype=np.int)
+        inputs[0,:len(word_idx)]=word_idx
+
+        feature_vectors=self.extract_features(inputs=inputs, extend_part={})
+        return feature_vectors[0]
+
+
     def extract_features(self, inputs, extend_part):
         '''
         >>> Extract features
@@ -276,7 +289,7 @@ class convnet(object):
             else:
                 test_dict[self.input_extensions[key]]=extended_part[key]
 
-        features,=self.sess.run([self.current_embedding,], feed_dict=feature_dict)
+        features,=self.sess.run([self.feature_vector,], feed_dict=feature_dict)
         return features
 
     def link_forward(self, input_tensor):
@@ -292,7 +305,7 @@ class convnet(object):
             padding_tensor=tf.nn.embedding_lookup(self.embedding_matrix,tf.fill(dims=[self.batch_size, self.sequence_length-input_shape[1]], value=4))
             input_tensor=tf.concat([input_tensor, padding_tensor], axis=1)
 
-        with tf.variable_scope(self.root_scope, reuse=True):
+        with tf.variable_scope('convnet', reuse=True):
             assert self.input_extend_types in [None, []], 'input_extend_types have to be None, but now it is %s'%str(self.input_extend_types)
 
             with tf.variable_scope('CNN') as scope:

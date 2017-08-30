@@ -13,7 +13,7 @@ import convnet
 import xml_parser
 
 if len(sys.argv)<2:
-    print('Usage: python rouge.py <config> <output_file> <ground_truth folder> <output folder> [<ground_truth suffix>] [output suffix]')
+    print('Usage: python rouge.py <config>')
     exit(0)
 
 hyper_param=xml_parser.parse(sys.argv[1])

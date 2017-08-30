@@ -1,0 +1,30 @@
+<hyper_params>
+    <sent2vec_params>
+        <convnet_params>
+            <param name="batch_size" type="int">16</param>
+            <param name="sequence_length" type="int">400</param>
+            <param name="class_num" type="int">2</param>
+            <param name="vocab_size" type="int">50000</param>
+            <param name="embedding_dim" type="int">128</param>
+            <param name="filter_sizes" type="list_int">1,2,3,4,5,6,7</param>
+            <param name="feature_map" type="int">300</param>
+            <param name="hidden_sizes" type="list_int">60</param>
+            <param name="name" type="str">convnet2</param>
+            <param name="grad_clip_norm" type="float">0.2</param>
+            <param name="input_extend_types" type="list_str"></param>
+            <update_policy>
+                <param name="name" type="str">adam</param>
+                <param name="learning_rate" type="float">0.0005</param>
+                <param name="momentum" type="float"></param>
+                <param name="initial_accumulator_value" type="float"></param>
+                <param name="rho" type="float"></param>
+                <param name="epsilon" type="float">1e-8</param>
+                <param name="decay" type="float"></param>
+                <param name="beta1" type="float">0.9</param>
+                <param name="beta2" type="float">0.999</param>
+            </update_policy>
+        </convnet_params>
+        <param name="model2load" type="str">model_saved/convnet2/convnet2_9500.ckpt</param>
+        <param name="gamma" type="float">0.2</param>
+    </sent2vec_params>
+</hyper_params>

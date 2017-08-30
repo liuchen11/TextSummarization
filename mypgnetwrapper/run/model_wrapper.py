@@ -4,8 +4,8 @@ import sys
 import tensorflow as tf
 
 file_path=os.path.dirname(os.path.realpath(__file__))
-file_path=os.path.join(os.path.join(file_path,os.pardir),'model')
-sys.path.insert(0, file_path)
+model_path=os.path.join(os.path.join(file_path,os.pardir),'model')
+sys.path.insert(0, model_path)
 import util
 import html
 import data
@@ -27,7 +27,6 @@ class RunTimeWrapper(object):
 
         self.model=model.SummarizationModel(hps=model_settings, vocab=self.vocab, extra_info=extra_info)   # Construct the model
         self.decode_wrapper=None
-
 
     '''
     >>> launch the tensorflow session
@@ -60,31 +59,6 @@ def build_batch(query,vocab,hp):
     instance=batcher.Example(article=query, abstract_sentences='', vocab=vocab, hps=hp)
     batch=batcher.Batch(example_list=[instance,]*hp.batch_size, hps=hp, vocab=vocab)
     return batch
-
-# class TrainWrapper(object):
-
-#     '''
-#     >>> wrapper for the training
-#     >>> model: summarization model
-#     >>> vocab: vocabulary object
-#     '''
-#     def __init__(self,model,vocab,hp,loaded_params=[]):
-#         self.hp=hp
-#         self.model=model
-#         self.sess=tf.Session(config=util.get_config())
-#         self.vocab=vocab
-
-#         self.model.build_graph()
-#         param2load=[]
-#         for var in tf.global_variables():
-#             if not var in loaded_params:
-#                 param2load.append(var)
-#         self.train_dir=os.path.join(self.hp.log_root, 'train')
-#         if os.path.exists(self.train_dir):
-#             ckpt_path=util.load_ckpt(tf.train.Saver(param2load), self.sess)
-#         else:
-#             os.makedirs(self.train_dir)
-
 
 class DecoderWrapper(object):
 
