@@ -30,3 +30,6 @@ There are two tools to evaluate the results of abstractive model. One is to calc
 python util/calc_rouge.py <output_file> <ground_truth folder> <output folder> [<ground_truth suffix>] [output suffix]
 python util/calc_vec.py util/calc_vec.xml
 ```
+
+In addition to all interfaces above, we also provide two online interfaces: `main_pgnet.py` and `main_mixed.py`. Both of them listen to a port of localhost and return an answer when the corresponding port receives some queries.
+
