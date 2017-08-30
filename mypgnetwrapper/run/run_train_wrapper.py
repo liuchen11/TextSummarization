@@ -156,9 +156,13 @@ def run_training(model, batcher, sess_context_manager, sv, summary_writer):
     while True: # repeats until interrupted
       batch = batcher.next_batch()
       batch_idx += 1
+      extra_input={}
+      if 'key_phrases' in model._extra_info:
+        # TODO: calculate the key phrase input part for this specific batch
+        raise NotImplementedError('Key phrases part has not been implemented here!')
       tf.logging.info('running training step...')
       t0=time.time()
-      results = model.run_train_step(sess, batch)
+      results = model.run_train_step(sess, batch, extra_input=extra_input)
       t1=time.time()
       tf.logging.info('seconds for training step: %.3f', t1-t0)
       # if batch_idx % 500:
@@ -193,10 +197,14 @@ def run_eval(model, batcher, vocab):
   while True:
     _ = util.load_ckpt(saver, sess) # load a new checkpoint
     batch = batcher.next_batch() # get the next batch
+    extra_input={}
+    if 'key_phrases' in model._extra_info:
+      # TODO: calculate the key phrase input part for this specific batch
+      raise NotImplementedError('Key phrases part has not been implemented here!')
 
     # run eval on the batch
     t0=time.time()
-    results = model.run_eval_step(sess, batch)
+    results = model.run_eval_step(sess, batch, extra_input=extra_input)
     t1=time.time()
     tf.logging.info('seconds for batch: %.2f', t1-t0)
 
@@ -236,21 +244,28 @@ def main(unused_argv):
   if os.path.exists(FLAGS.external_config):
     external_params=xml_parser.parse(FLAGS.external_config, flat=False)
 
-    sent2vec_params=external_params['sent2vec_params']
-    convnet_params=sent2vec_params['convnet_params']
-    convnet_model2load=sent2vec_params['model2load']
+    if 'sent2vec_params' in external_params:
+      sent2vec_params=external_params['sent2vec_params']
+      convnet_params=sent2vec_params['convnet_params']
+      convnet_model2load=sent2vec_params['model2load']
 
-    gamma = 0.2 if not 'gamma' in sent2vec_params else sent2vec_params['gamma']
+      gamma = 0.2 if not 'gamma' in sent2vec_params else sent2vec_params['gamma']
 
-    my_convnet=convnet.convnet(convnet_params)
-    my_convnet.train_validate_test_init()
-    my_convnet.load_params(file2load=convnet_model2load)
+      my_convnet=convnet.convnet(convnet_params)
+      my_convnet.train_validate_test_init()
+      my_convnet.load_params(file2load=convnet_model2load)
 
-    fixed_vars=tf.global_variables()
-    fixed_vars.remove(my_convnet.embedding_matrix)
+      fixed_vars=tf.global_variables()
+      fixed_vars.remove(my_convnet.embedding_matrix)
 
-    extra_info['sent2vec'] = {'gamma':gamma, 'network':my_convnet}
-    extra_info['fixed_vars'] = fixed_vars
+      extra_info['sent2vec'] = {'gamma':gamma, 'network':my_convnet}
+      extra_info['fixed_vars'] = fixed_vars
+
+    if 'key_phrases' in external_params:
+      # TODO: phrase some parameters to import the results of key-phrase extracted or \
+      # parameters for online key-phrase extraction
+      extra_info['key_phrases'] = {}
+      raise NotImplementedError('Key phrases part has not been implemented yet')
 
   tf.logging.set_verbosity(tf.logging.INFO) # choose what level of logging you want
   tf.logging.info('Starting seq2seq_attention in %s mode...', (FLAGS.mode))

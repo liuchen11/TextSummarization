@@ -97,21 +97,28 @@ def main(unused_argv):
     if os.path.exists(FLAGS.external_config):
         external_params=xml_parser.parse(FLAGS.external_config, flat=False)
 
-        sent2vec_params=external_params['sent2vec_params']
-        convnet_params=sent2vec_params['convnet_params']
-        convnet_model2load=sent2vec_params['model2load']
+        if 'sent2vec_params' in external_params:
+            sent2vec_params=external_params['sent2vec_params']
+            convnet_params=sent2vec_params['convnet_params']
+            convnet_model2load=sent2vec_params['model2load']
 
-        gamma = 0.2 if not 'gamma' in sent2vec_params else sent2vec_params['gamma']
+            gamma = 0.2 if not 'gamma' in sent2vec_params else sent2vec_params['gamma']
 
-        my_convnet=convnet.convnet(convnet_params)
-        my_convnet.train_validate_test_init()
-        my_convnet.load_params(file2load=convnet_model2load)
+            my_convnet=convnet.convnet(convnet_params)
+            my_convnet.train_validate_test_init()
+            my_convnet.load_params(file2load=convnet_model2load)
 
-        fixed_vars=tf.global_variables()
-        fixed_vars.remove(my_convnet.embedding_matrix)
+            fixed_vars=tf.global_variables()
+            fixed_vars.remove(my_convnet.embedding_matrix)
 
-        extra_info['sent2vec']={'gamma':gamma, 'network':my_convnet}
-        extra_info['fixed_vars']=fixed_vars
+            extra_info['sent2vec']={'gamma':gamma, 'network':my_convnet}
+            extra_info['fixed_vars']=fixed_vars
+
+        if 'key_phrases' in external_params:
+            # TODO: phrase some parameters to import the results of key-phrase extracted or \
+            # parameters for online key-phrase extraction
+            extra_info['key_phrases'] = {}
+            raise NotImplementedError('Key phrases part has not been implemented yet')
 
     model_hp_list=['mode', 'lr', 'adagrad_init_acc', 'rand_unif_init_mag', 'trunc_norm_init_std', 'max_grad_norm',
         'hidden_dim', 'emb_dim', 'batch_size', 'max_dec_steps', 'max_enc_steps', 'coverage', 'cov_loss_wt', 'pointer_gen']

@@ -38,8 +38,11 @@ class SummarizationModel(object):
     if hps.mode=="decode" and hps.coverage:
       self.prev_coverage = tf.placeholder(tf.float32, [hps.batch_size, None], name='prev_coverage')
 
+    if 'key_phrases' in self._extra_info:
+      # TODO: Add this part if key phrases introduce extra input placeholder of the whole network.
+      raise NotImplementedError('Key phrases part here has not been implemented!')
 
-  def _make_feed_dict(self, batch, just_enc=False):
+  def _make_feed_dict(self, batch, just_enc=False, extra_input={}):
     """Make a feed dictionary mapping parts of the batch to the appropriate placeholders.
 
     Args:
@@ -62,6 +65,11 @@ class SummarizationModel(object):
       feed_dict[self._dec_batch] = batch.dec_batch
       feed_dict[self._target_batch] = batch.target_batch
       feed_dict[self._padding_mask] = batch.padding_mask
+
+    if 'key_phrases' in self._extra_info:
+      # TODO: bind some other input tensor to the placeholder if any
+      raise NotImplementedError('Key phrases part here has not been implemented!')
+
     return feed_dict
 
 
@@ -307,6 +315,10 @@ class SummarizationModel(object):
 
             print('sent2vec-based loss constructed, gamma = %.2f, loss_mode=%s'%(gamma, loss_mode))
 
+          if 'key_phrases' in self._extra_info:
+            # TODO how to incoporate the information from key phrases into the loss function
+            raise NotImplementedError('Key phrases part has not been implemented yet.')
+
           tf.summary.scalar('loss', self._loss)
 
           # Calculate coverage loss from the attention distributions
@@ -369,9 +381,9 @@ class SummarizationModel(object):
     t1 = time.time()
     tf.logging.info('Time to build graph: %i seconds', t1 - t0)
 
-  def run_train_step(self, sess, batch):
+  def run_train_step(self, sess, batch, extra_input={}):
     """Runs one training iteration. Returns a dictionary containing train op, summaries, loss, global_step and (optionally) coverage loss."""
-    feed_dict = self._make_feed_dict(batch)
+    feed_dict = self._make_feed_dict(batch, extra_input=extra_input)
     to_return = {
         'train_op': self._train_op,
         'summaries': self._summaries,
@@ -382,9 +394,9 @@ class SummarizationModel(object):
       to_return['coverage_loss'] = self._coverage_loss
     return sess.run(to_return, feed_dict)
 
-  def run_eval_step(self, sess, batch):
+  def run_eval_step(self, sess, batch, extra_input={}):
     """Runs one evaluation iteration. Returns a dictionary containing summaries, loss, global_step and (optionally) coverage loss."""
-    feed_dict = self._make_feed_dict(batch)
+    feed_dict = self._make_feed_dict(batch, extra_input=extra_input)
     to_return = {
         'summaries': self._summaries,
         'loss': self._loss,
@@ -394,7 +406,7 @@ class SummarizationModel(object):
       to_return['coverage_loss'] = self._coverage_loss
     return sess.run(to_return, feed_dict)
 
-  def run_encoder(self, sess, batch):
+  def run_encoder(self, sess, batch, extra_input={}):
     """For beam search decoding. Run the encoder on the batch and return the encoder states and decoder initial state.
 
     Args:
@@ -405,7 +417,7 @@ class SummarizationModel(object):
       enc_states: The encoder states. A tensor of shape [batch_size, <=max_enc_steps, 2*hidden_dim].
       dec_in_state: A LSTMStateTuple of shape ([1,hidden_dim],[1,hidden_dim])
     """
-    feed_dict = self._make_feed_dict(batch, just_enc=True) # feed the batch into the placeholders
+    feed_dict = self._make_feed_dict(batch, just_enc=True, extra_input=extra_input) # feed the batch into the placeholders
     (enc_states, dec_in_state, global_step) = sess.run([self._enc_states, self._dec_in_state, self.global_step], feed_dict) # run the encoder
 
     # dec_in_state is LSTMStateTuple shape ([batch_size,hidden_dim],[batch_size,hidden_dim])

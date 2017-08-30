@@ -74,8 +74,13 @@ def run_beam_search(sess, model, vocab, batch):
   Returns:
     best_hyp: Hypothesis object; the best hypothesis found by beam search.
   """
+  extra_input={}
+  if 'key_phrases' in model._extra_info:
+    # TODO: build key phrase features from this specific batch
+    raise NotImplementedError('Key phrases part here has not been implemented yet!')
+
   # Run the encoder to get the encoder hidden states and decoder initial state
-  enc_states, dec_in_state = model.run_encoder(sess, batch)
+  enc_states, dec_in_state = model.run_encoder(sess, batch, extra_input=extra_input)
   # dec_in_state is a LSTMStateTuple
   # enc_states has shape [batch_size, <=max_enc_steps, 2*hidden_dim].
 
