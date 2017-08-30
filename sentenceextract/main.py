@@ -46,8 +46,6 @@ if __name__=='__main__':
     my_laucher=laucher.laucher(laucher_params)
     my_laucher.start()
 
-    # tokenizer=nltk.data.load('tokenizers/punkt/english.pickle')
-
     # set up the server
     host='127.0.0.1'
     port=8100

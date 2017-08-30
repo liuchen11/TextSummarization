@@ -8,11 +8,9 @@ else:
     import cPickle
 
 sys.path.insert(0,'./util')
+sys.path.insert(0,'./model')
 from py2py3 import *
 import numpy as np
-
-sys.path.insert(0,'./util')
-sys.path.insert(0,'./model')
 
 import data_loader
 import data_generator
